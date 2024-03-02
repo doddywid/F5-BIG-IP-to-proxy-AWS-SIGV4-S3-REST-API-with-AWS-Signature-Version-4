@@ -1,0 +1,9 @@
+ltm profile server-ssl server-ssl-s3 {
+    app-service none
+    defaults-from serverssl
+    server-name aws-doddy.s3.ap-southeast-1.amazonaws.com
+}
+
+
+#This is very basic profile based on serverssl template, just to highlight changes required in SNI/server-name field.
+#You may need to fine tune for highger security level SSL.
