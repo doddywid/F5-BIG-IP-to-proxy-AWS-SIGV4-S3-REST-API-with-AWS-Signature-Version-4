@@ -1,0 +1,31 @@
+ltm virtual vs_proxy_s3 {
+    destination 10.0.9.150:https
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool pool_s3
+    profiles {
+        cache-s3-bucket { }
+        clientssl-insecure-compatible {
+            context clientside
+        }
+        http { }
+        server-ssl-s3 {
+            context serverside
+        }
+        tcp { }
+    }
+    rules {
+        irule_s3_proxy_v2.1
+    }
+    serverssl-use-sni disabled
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vlans {
+        internal
+    }
+    vlans-enabled
+}
