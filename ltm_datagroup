@@ -1,0 +1,26 @@
+ltm data-group internal aws_s3_dg {
+    records {
+        ACCESS_KEY {
+            data --redacted--
+        }
+        ALGORITHM {
+            data AWS4-HMAC-SHA256
+        }
+        BUCKET_NAME {
+            data aws-doddy
+        }
+        REGION {
+            data ap-southeast-1
+        }
+        SECRET_KEY {
+            data --redacted--
+        }
+        SERVICE {
+            data s3
+        }
+        SIGNED_HEADERS {
+            data "host;x-amz-date"
+        }
+    }
+    type string
+}
