@@ -1,3 +1,5 @@
+# **F5 BIG-IP to proxy AWS SIGV4 S3 REST API with AWS Signature Version 4**
+
 This repository explains the mechanism to expose (a.k.a proxy) AWS S3 Bucket using REST API through F5 BIG-IP.
 As per this writing date, latest AWS authorization for REST API requests is using AWS Signature Version 4 (will be shortened as SIGV4 througout the rest of this repo).
 
