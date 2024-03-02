@@ -8,3 +8,9 @@ This is sometimes required when you are dealing with situation where you need to
 The diagram can be seen as below
 
 ![alt text](https://github.com/doddywid/F5-BIG-IP-to-proxy-AWS-SIGV4-S3-REST-API-with-AWS-Signature-Version-4/blob/main/topology.png)
+
+File structure:
+- ltm_datagroup: ltm datagroup configuration, for storing fixed variables like api access key, api secret, region, service, algorithm, etc.
+- server-ssl-profile: configuration for server-side SSL profile. SNI in this profile needs to match S3 API endpoint host
+- irule_s3_proxy_v2.1: iRule for cryptographic tasks & calculating SIGV4 authorization header
+- virtual-server: ltm virtual server configuration.
