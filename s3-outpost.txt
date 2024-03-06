@@ -1,0 +1,14 @@
+*This is preliminary information, ongoing confirmation with tests. This notification will be removed once confirmed.
+
+- For S3 outpost, the same SIGV4 is also applicable
+- The API target is different, which shall follow the scheme below
+
+Host name in AWS Region    : Bucket.s3.amazonaws.com
+Host name on AWS Outposts  : MyAccesPointName-AccountID.outpost-ID.s3-outposts.Region.amazonaws.com
+Sample Format1             : AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com         OR
+Sample Format2             : AccessPointAlias.outpostId.s3-outposts.Region.amazonaws.com
+
+Example Value (Please update to your own)
+Format1: https://MyOutpostsAp-123456789012.op-09kx3d28b7b238791.s3-outposts.us-east-1.amazonaws.com
+Format2: myout-okc142a3187vjeer6xcc3aks1l3be87ke2d121jlu91--op-s3.op-09kxld28g7e238671.s3-outposts.us-east-1.amazonaws.com
+
