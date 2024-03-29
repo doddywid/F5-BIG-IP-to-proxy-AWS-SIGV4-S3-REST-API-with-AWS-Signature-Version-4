@@ -1,12 +1,12 @@
 when HTTP_REQUEST {
     #Initialize fixed variable
     set ACCESS_KEY 	    [class match -value ACCESS_KEY equals aws_s3_dg]
-	  set SECRET_KEY		[class match -value SECRET_KEY equals aws_s3_dg]
-	  set BUCKET_NAME	    [class match -value BUCKET_NAME equals aws_s3_dg]
+    set SECRET_KEY		[class match -value SECRET_KEY equals aws_s3_dg]
+    set BUCKET_NAME	    [class match -value BUCKET_NAME equals aws_s3_dg]
     set REGION 	        [class match -value REGION equals aws_s3_dg]
-	  set SERVICE		    [class match -value SERVICE equals aws_s3_dg]
-	  set ALGORITHM	    [class match -value ALGORITHM equals aws_s3_dg]
-	  set SIGNED_HEADERS	[class match -value SIGNED_HEADERS equals aws_s3_dg]
+    set SERVICE		    [class match -value SERVICE equals aws_s3_dg]
+    set ALGORITHM	    [class match -value ALGORITHM equals aws_s3_dg]
+    set SIGNED_HEADERS	[class match -value SIGNED_HEADERS equals aws_s3_dg]
 	
     #Set timestamps
     set DATE            [clock format [clock seconds] -format {%Y%m%dT%H%M%SZ} -gmt true]
