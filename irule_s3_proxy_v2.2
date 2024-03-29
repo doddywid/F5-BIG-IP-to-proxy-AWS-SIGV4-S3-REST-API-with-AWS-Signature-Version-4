@@ -1,0 +1,61 @@
+when HTTP_REQUEST {
+    #Initialize fixed variable
+    set ACCESS_KEY 	    [class match -value ACCESS_KEY equals aws_s3_dg]
+	  set SECRET_KEY		[class match -value SECRET_KEY equals aws_s3_dg]
+	  set BUCKET_NAME	    [class match -value BUCKET_NAME equals aws_s3_dg]
+    set REGION 	        [class match -value REGION equals aws_s3_dg]
+	  set SERVICE		    [class match -value SERVICE equals aws_s3_dg]
+	  set ALGORITHM	    [class match -value ALGORITHM equals aws_s3_dg]
+	  set SIGNED_HEADERS	[class match -value SIGNED_HEADERS equals aws_s3_dg]
+	
+    #Set timestamps
+    set DATE            [clock format [clock seconds] -format {%Y%m%dT%H%M%SZ} -gmt true]
+    set DATE_ONLY       [clock format [clock seconds] -format {%Y%m%d} -gmt true]
+    
+    #Set request properties
+    set uri_path [HTTP::uri]
+    set uri_address $BUCKET_NAME.s3.$REGION.amazonaws.com
+    set method [HTTP::method]
+    log local0. "method $method"
+    
+    #Calculate signing key
+    binary scan "AWS4$SECRET_KEY" H* kSecret
+    binary scan [CRYPTO::sign -alg hmac-sha256 -keyhex $kSecret $DATE_ONLY] H* kDate
+    binary scan [CRYPTO::sign -alg hmac-sha256 -keyhex $kDate $REGION] H* kRegion
+    binary scan [CRYPTO::sign -alg hmac-sha256 -keyhex $kRegion $SERVICE] H* kService
+    binary scan [CRYPTO::sign -alg hmac-sha256 -keyhex $kService "aws4_request"] H* kSigning
+    
+    switch -- [string toupper $method] {
+        PUT {
+            HTTP::collect [HTTP::header Content-Length]
+        }
+        default {
+            #Calculate authorization header
+            binary scan [CRYPTO::hash -alg sha256 ""] H* PAYLOAD 
+            set CANONICAL_REQUEST "$method\n$uri_path\n\nhost:$uri_address\nx-amz-content-sha256:$PAYLOAD\nx-amz-date:$DATE\n\n$SIGNED_HEADERS\n$PAYLOAD"
+            binary scan [CRYPTO::hash -alg sha256 $CANONICAL_REQUEST] H* CANONICAL_REQUEST_HASH 
+            set CREDENTIAL_SCOPE "$DATE_ONLY/$REGION/$SERVICE/aws4_request"
+            set STRING_TO_SIGN "$ALGORITHM\n$DATE\n$CREDENTIAL_SCOPE\n$CANONICAL_REQUEST_HASH"
+            binary scan [CRYPTO::sign -alg hmac-sha256 -keyhex $kSigning $STRING_TO_SIGN] H* SIGNATURE
+            set AUTHORIZATION_HEADER "$ALGORITHM Credential=$ACCESS_KEY/$CREDENTIAL_SCOPE, SignedHeaders=$SIGNED_HEADERS, Signature=$SIGNATURE"
+        }
+    
+    }
+}
+when HTTP_REQUEST_DATA {
+    binary scan [CRYPTO::hash -alg sha256 [HTTP::payload]] H* PAYLOAD 
+    set CANONICAL_REQUEST "$method\n$uri_path\n\nhost:$uri_address\nx-amz-content-sha256:$PAYLOAD\nx-amz-date:$DATE\n\n$SIGNED_HEADERS\n$PAYLOAD"
+    #log local0. "CANONICAL_REQUEST"
+    binary scan [CRYPTO::hash -alg sha256 $CANONICAL_REQUEST] H* CANONICAL_REQUEST_HASH 
+    set CREDENTIAL_SCOPE "$DATE_ONLY/$REGION/$SERVICE/aws4_request"
+    set STRING_TO_SIGN "$ALGORITHM\n$DATE\n$CREDENTIAL_SCOPE\n$CANONICAL_REQUEST_HASH"
+    binary scan [CRYPTO::sign -alg hmac-sha256 -keyhex $kSigning $STRING_TO_SIGN] H* SIGNATURE
+    set AUTHORIZATION_HEADER "$ALGORITHM Credential=$ACCESS_KEY/$CREDENTIAL_SCOPE, SignedHeaders=$SIGNED_HEADERS, Signature=$SIGNATURE"
+}
+when HTTP_REQUEST_SEND {
+    #Transform Host & enrich with required headers
+    HTTP::header replace Host $uri_address
+    HTTP::header authorization $AUTHORIZATION_HEADER
+    HTTP::header x-amz-content-sha256 $PAYLOAD
+    HTTP::header x-amz-date $DATE
+}
