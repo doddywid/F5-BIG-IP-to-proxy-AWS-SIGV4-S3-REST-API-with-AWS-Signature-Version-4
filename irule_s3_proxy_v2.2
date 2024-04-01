@@ -1,3 +1,5 @@
+##irule v2.2 is adjusted logic, where header "x-amz-content-sha256" included in signing process. This is required for S3 Outpost
+
 when HTTP_REQUEST {
     #Initialize fixed variable
     set ACCESS_KEY 	    [class match -value ACCESS_KEY equals aws_s3_dg]
