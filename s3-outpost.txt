@@ -1,10 +1,11 @@
-*This is preliminary information, ongoing confirmation with tests. This notification will be removed once confirmed.
-
+Some notes when the proxied request is targeting S3 Outpost instead of S3 in region:
 - For S3 outpost, the same SIGV4 is also applicable
 - The API target is different, which shall follow the scheme below
+- In my testing, I find S3 Outpost API is more strict, where "x-amz-content-sha256" is also required to be signed. This header is not required to be signed in S3 region API.
 
 Host name in AWS Region    : Bucket.s3.amazonaws.com
 Host name on AWS Outposts  : MyAccesPointName-AccountID.outpost-ID.s3-outposts.Region.amazonaws.com
+Host name on AWS Outposts  : Bucketname.outpost-ID.s3-outposts.Region.amazonaws.com
 Sample Format1             : AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com         OR
 Sample Format2             : AccessPointAlias.outpostId.s3-outposts.Region.amazonaws.com
 
