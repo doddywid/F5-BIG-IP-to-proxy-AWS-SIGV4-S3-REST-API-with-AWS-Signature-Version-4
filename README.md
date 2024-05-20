@@ -12,5 +12,6 @@ The diagram can be seen as below
 File structure:
 - ltm_datagroup: ltm datagroup configuration, for storing fixed variables like api access key, api secret, region, service, algorithm, etc.
 - server-ssl-profile: configuration for server-side SSL profile. SNI in this profile needs to match S3 API endpoint host
-- irule_s3_proxy_v2.1: iRule for cryptographic tasks & calculating SIGV4 authorization header
+- irule_s3_proxy_v2.2: iRule for cryptographic tasks & calculating SIGV4 authorization header
+- irule_s3_proxy_v2.1: previous version of iRule for cryptographic tasks & calculating SIGV4 authorization header. This version does not include payload in signing process
 - virtual-server: ltm virtual server configuration.
